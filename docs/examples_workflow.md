@@ -15,53 +15,53 @@ Once you have sucessfully compiled the software, you can follow the instructions
    python rescale_geometry.py
    ```
     In this step the python script will rescale the geometry to fit within the grid as well as output the vertex outward normals in the OBJ file. This step is crucial as the software will raise an error if the geometry does not contain vertex normals information.
-3. Navigate to the serial code and compile it and return to the examples folder
+3. Navigate to the source directory, compile, and copy the executable to the example folder
    ```
-   cd ../../src/serial
+   cd ../../src
    make
-   cp gensdf_serial ../../example/
+   cp gensdf ../../example/
    cd ../../example/
    ```
-4. Execute the code
+   > **Note:** The `example/parameters.in` uses the old `!` comment style. Before running, update it to use `#` for comment lines and add the four new parameters (`use_fast_sweep`, `narrow_band_width`, `vertical_axis`, `compute_face_sdf`) — see `docs/input_parameters.md` for the full format.
+4. Execute the code with MPI
    ```
-   ./gensdf_serial
+   mpirun -np 4 ./gensdf
    ```
    You will get output that looks as shown below.
    ```
-     ░▒▓██████▓▒░░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓███████▓▒░▒▓███████▓▒░░▒▓████████▓▒░ 
-     ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
-     ░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
-     ░▒▓█▓▒▒▓███▓▒░▒▓██████▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓██████▓▒░   
-     ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
-     ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
-     ░▒▓██████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░░▒▓███████▓▒░░▒▓█▓▒░        
-    *** Input file sucessfully read ***
-    *** Successfully read the CaNS grid ***
-    *** Sucessfully finished setting up the grid spacing ***
-    Successfully read OBJ file: data/armadillo_withnormals.obj
-    Number of vertices:        49990
-    Number of normals:        49990
-    Number of faces:        99976
-    Geometry is bounded by (minimum)   12.000000000000000       0.50000000000000000       0.50000000000000000     
-    Geometry is bounded by (maximum)   16.000000000000000        5.2650256700000000        4.1345718800000002     
-    *** Min-Max Index-Value pair ***
-    Min-Max x:         182   11.375000000000000      |         266   16.625000000000000     
-    Min-Max y:           1   3.1250000000000000E-002 |          94   5.8437500000000000     
-    Min-Max z:           1   3.1250000000000000E-002 |          76   4.7187500000000000     
-    -- Finished pre-processing geometry in   0.35796300000000003      seconds...
-    -- Estimated Minimum Memory usage:  0.14 GiB(s)...
-    *** Calculating the signed-distance-field | u-faces ***
-    ||||||||||||||||||||||100.00%    99976/   99976 Elapsed:    11.92s Remaining:     0.00s
-    *** Writing output data to file ***
-    -- Done with file write in    2.6056000000000523E-002 seconds...
+    ░▒▓██████▓▒░░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓███████▓▒░▒▓███████▓▒░░▒▓████████▓▒░ 
+   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
+   ░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
+   ░▒▓█▓▒▒▓███▓▒░▒▓██████▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓██████▓▒░   
+   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
+   ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
+    ░▒▓██████▓▒░░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░░▒▓███████▓▒░░▒▓█▓▒░        
+   *** Starting with            4 MPI ranks ***
+   *** Input file successfully read ***
+   *** Successfully read the grid ***
+   *** Successfully set up grid spacing ***
+   Successfully read OBJ: data/armadillo_withnormals.obj
+   Vertices:        49990   Normals:        49990   Faces:        99976
+   Geometry bbox min:  12.000   0.500   0.500
+   Geometry bbox max:  16.000   5.265   4.135
+   AABB x:   182  11.375  |   266  16.625
+   AABB y:     1   0.031  |    94   5.844
+   AABB z:     1   0.031  |    76   4.719
+   -- Pre-processing done in   0.36 s
+   -- Estimated minimum memory:  0.14  GiB(s)
+   *** Calculating SDF | cell-centres ***
+   ||||||||||||||||||||||100.00%    99976/   99976 Elapsed:    11.92s Remaining:     0.00s
+   *** Writing | cell-centres ***
+   -- Write done in   0.026 s | cell-centres
+   *** SDF complete in   47.85 s ***
    ```
-4. Once the SDF is generated for the four components, you can visualise the results in paraview using the `read_xmf_constant_grid.xmf` script. Please use the default XMF reader in paraview as the other two options will crash the session.
-5. To visualise the interface, plot the contour with a value of 0.
+5. Once the SDF is generated, you can visualise it in Paraview using the `read_xmf_constant_grid.xmf` script. Use the default XDMF reader — the other two options may crash the session.
+6. To visualise the geometry surface, plot the contour at a value of 0.
 
-## MPI-version
+## MPI notes
 
-To use the MPI version most of the steps are similar except that you will need to compile the mpi version of the code hosted in the `src/mpi` directory.
+GenSDF is MPI-only; there is no separate serial build. The single executable `gensdf` is compiled from `src/`.
 
-- Important to make sure that the MPI library is correctly sourced in the terminal environment
-- MPI-version of the code does not run with `mpirun -np 1 ./gensdf_mpi` as the decomposition relies on atleast 2 divisions in the streamwise direction.
-- A note of warning that since the algorithm only computes the SDF for a bounding box based on the geometry, using increasing MPI ranks for SDF computations for a small bounding box may lead to problems. 
+- Ensure the MPI library is correctly sourced in your terminal environment before compiling and running.
+- Running with a single rank (`mpirun -np 1 ./gensdf`) is supported.
+- Because the domain decomposition splits the geometry bounding box along $x$, using more MPI ranks than there are $x$-cells inside the bounding box is not useful and may produce empty slabs for some ranks. Keep the rank count commensurate with the bounding-box extent.
