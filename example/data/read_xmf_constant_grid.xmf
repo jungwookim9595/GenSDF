@@ -2,7 +2,9 @@
 <Xdmf Version="2.0">
   <Domain>
     <!-- Topology describes the mesh (grid structure). -->
-    <Topology TopologyType="3DCoRectMesh" Dimensions="128 128 512" />
+    <!-- Dimensions order is K J I (slowest→fastest), matching Fortran column-major layout.   -->
+    <!-- sdfp.bin is written as padded(nx+2, nz+2, ny) so I=nx+2=514, J=nz+2=130, K=ny=128. -->
+    <Topology TopologyType="3DCoRectMesh" Dimensions="128 130 514" />
 
     <!-- Geometry defines the origin and spacing of the grid. -->
     <Geometry GeometryType="ORIGIN_DXDYDZ">
@@ -32,8 +34,8 @@
 
         <!-- Scalar field stored at each grid point (your binary data) -->
         <Attribute Name="SDF" AttributeType="Scalar" Center="Node">
-          <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Native" Dimensions="128 128 512" Seek="0">
-            sdfu.bin
+          <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="128 130 514" Seek="0">
+            sdfp.bin
           </DataItem>
         </Attribute>
       </Grid>

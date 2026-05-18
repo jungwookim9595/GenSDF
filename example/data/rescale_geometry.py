@@ -24,15 +24,15 @@ def rescale_mesh_to_bounding_box(mesh, xmin, xmax):
     scale_factors = target_size / current_size
     scale = np.min(scale_factors)
 
-    # Scale the mesh
-    mesh.apply_scale(scale)
+    # Scale the mesh vertices
+    mesh.vertices = np.array(mesh.vertices) * scale
 
     # Calculate the new bounding box after scaling
     new_min, _ = mesh.bounds
 
     # Translate the mesh to align it with the specified bounding box
     translation = np.array(xmin) - new_min
-    mesh.apply_translation(translation)
+    mesh.vertices = np.array(mesh.vertices) + translation
 
     return mesh
 

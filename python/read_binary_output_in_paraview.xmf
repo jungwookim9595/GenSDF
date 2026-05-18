@@ -3,21 +3,27 @@
 <Xdmf Version="3.0">
   <Domain>
     <!-- Topology describes the mesh (grid structure). -->
-    <Topology TopologyType="3DRectMesh" Dimensions="128 128 512" />
+    <!-- Dimensions order is K J I (slowest→fastest), matching Fortran column-major layout.     -->
+    <!-- sdfp.bin is written as padded(nx+2, nz+2, ny) so I=nx+2=514, J=nz+2=130, K=ny=128.  -->
+    <Topology TopologyType="3DRectMesh" Dimensions="128 130 514" />
 
-    <!-- Geometry defines the physical coordinates of the points in the mesh. -->
+    <!-- Geometry defines the physical coordinates of the points in the mesh.                  -->
+    <!-- XDMF X (I, fastest) = GenSDF x-streamwise  → xgrid_pad.bin  (514 pts, with ghost)   -->
+    <!-- XDMF Y (J, middle)  = GenSDF z-wall-normal → wngrid_pad.bin (130 pts, with ghost)   -->
+    <!-- XDMF Z (K, slowest) = GenSDF y-spanwise    → spgrid.bin     (128 pts, no ghost)     -->
+    <!-- Generate these files with write_xmf_grid.py                                          -->
     <Geometry GeometryType="VXVYVZ">
-      <!-- X-coordinates -->
-      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="512">
-        xgrid.bin
+      <!-- X-coordinates (streamwise, ghost-padded) -->
+      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="514">
+        xgrid_pad.bin
       </DataItem>
-      <!-- Y-coordinates -->
-      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="128">
-        ygrid.bin
+      <!-- Y-coordinates (wall-normal, ghost-padded) -->
+      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="130">
+        wngrid_pad.bin
       </DataItem>
-      <!-- Z-coordinates -->
+      <!-- Z-coordinates (spanwise, no ghost) -->
       <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="128">
-        zgrid.bin
+        spgrid.bin
       </DataItem>
     </Geometry>
 
@@ -37,8 +43,8 @@
 
         <!-- Scalar field stored at each grid point (your binary data) -->
         <Attribute Name="SDF" AttributeType="Scalar" Center="Node">
-          <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="128 128 512" Seek="0">
-            sdfu.bin
+          <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="128 130 514" Seek="0">
+            sdfp.bin
           </DataItem>
         </Attribute>
       </Grid>
