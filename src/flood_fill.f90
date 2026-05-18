@@ -31,7 +31,7 @@ contains
 
         ! Start with a modest stack size; double when needed
         stack_size = 1024
-        allocate(flag(inx, iny, inz))
+        allocate(flag(sx:ex, sy:ey, sz:ez))
         allocate(stack(3, stack_size))
         flag = 0
 
@@ -45,6 +45,12 @@ contains
                     abs(grid(ii,jj,kk)) >= scalarvalue * SENTINEL_FRAC) then
                     flag(ii,jj,kk) = 1   ! exterior
                     top = top + 1
+                    if (top > stack_size) then
+                        stack_size = stack_size * 2
+                        allocate(tmp_stack(3, stack_size))
+                        tmp_stack(:, 1:top-1) = stack(:, 1:top-1)
+                        call move_alloc(tmp_stack, stack)
+                    end if
                     stack(:,top) = [ii,jj,kk]
                 end if
             end if

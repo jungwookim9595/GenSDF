@@ -8,15 +8,15 @@
     <!-- Geometry defines the physical coordinates of the points in the mesh. -->
     <Geometry GeometryType="VXVYVZ">
       <!-- X-coordinates -->
-      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Native" Dimensions="512">
+      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="512">
         xgrid.bin
       </DataItem>
       <!-- Y-coordinates -->
-      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Native" Dimensions="128">
+      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="128">
         ygrid.bin
       </DataItem>
       <!-- Z-coordinates -->
-      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Native" Dimensions="128">
+      <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="128">
         zgrid.bin
       </DataItem>
     </Geometry>
@@ -37,7 +37,7 @@
 
         <!-- Scalar field stored at each grid point (your binary data) -->
         <Attribute Name="SDF" AttributeType="Scalar" Center="Node">
-          <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Native" Dimensions="128 128 512" Seek="0">
+          <DataItem Format="Binary" DataType="Float" Precision="8" Endian="Big" Dimensions="128 128 512" Seek="0">
             sdfu.bin
           </DataItem>
         </Attribute>

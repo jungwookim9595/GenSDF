@@ -217,10 +217,14 @@ contains
         dx_inv_out = 1.0_dp / dx_out
         dy_inv_out = 1.0_dp / dy_out
         ! z spacing: face(ii+1) - face(ii) gives exact width of cell ii
-        do ii = 1, nz_in
+        ! Loop only to nz_in-1 to avoid reading zin(nz_in+1) past the array end;
+        ! the last cell reuses the second-to-last spacing.
+        do ii = 1, nz_in - 1
             dz_out(ii)     = zin(ii+1) - zin(ii)
             dz_inv_out(ii) = 1.0_dp    / dz_out(ii)
         end do
+        dz_out(nz_in)     = dz_out(nz_in - 1)
+        dz_inv_out(nz_in) = dz_inv_out(nz_in - 1)
 
         if (procid == 0) print *, "*** Successfully set up grid spacing ***"
     end subroutine setup_grid_spacing
@@ -570,32 +574,20 @@ contains
 
         d1 = size(interior,1); d2 = size(interior,2); d3 = size(interior,3)
 
-        if (vertical_axis == 3) then
-            ! No permutation: interior is (nxm, nym, nzm) = solver coords
-            allocate(padded(d1+2, d2+2, d3))
-            padded(2:d1+1, 2:d2+1, :) = interior
-            padded(1,      2:d2+1, :)  = interior(1,  :, :)
-            padded(d1+2,   2:d2+1, :)  = interior(d1, :, :)
-            padded(:, 1,           :)  = padded(:, 2,    :)
-            padded(:, d2+2,        :)  = padded(:, d2+1, :)
-        else
-            ! vertical_axis == 2: un-permute dims 2 and 3 back to solver coords.
-            ! interior(i, k_span, j_wall): d2=nzm_solver (spanwise), d3=nym_solver (wall-normal)
-            ! Output padded(i', j_wall', k_span): (nxm+2, nym_solver+2, nzm_solver)
-            allocate(padded(d1+2, d3+2, d2))
-            padded = 0.0_dp
-            do k = 1, d2           ! k loops solver's z (spanwise) = GenSDF dim 2
-                do j = 1, d3       ! j loops solver's y (wall-normal) = GenSDF dim 3
-                    padded(2:d1+1, j+1, k) = interior(:, k, j)
-                end do
+        ! Solver based padding on interior SDF
+        allocate(padded(d1+2, d3+2, d2))
+        padded = 0.0_dp
+        do k = 1, d2           ! k loops spanwise = GenSDF dim 2
+            do j = 1, d3       ! j loops wall-normal = GenSDF dim 3
+                padded(2:d1+1, j+1, k) = interior(:, k, j)
             end do
-            ! x ghost (dim 1)
-            padded(1,    2:d3+1, :) = padded(2,    2:d3+1, :)
-            padded(d1+2, 2:d3+1, :) = padded(d1+1, 2:d3+1, :)
-            ! wall-normal ghost (dim 2)
-            padded(:, 1,      :) = padded(:, 2,     :)
-            padded(:, d3+2,   :) = padded(:, d3+1,  :)
-        end if
+        end do
+        ! x ghost (dim 1)
+        padded(1,    2:d3+1, :) = padded(2,    2:d3+1, :)
+        padded(d1+2, 2:d3+1, :) = padded(d1+1, 2:d3+1, :)
+        ! wall-normal ghost (dim 2)
+        padded(:, 1,      :) = padded(:, 2,     :)
+        padded(:, d3+2,   :) = padded(:, d3+1,  :)
 
         open(newunit=unit, file=trim(outputfilename), access='stream', status='replace', form='unformatted', &
              convert='big_endian')
@@ -645,6 +637,7 @@ contains
         bar = repeat('|', progress) // repeat(' ', width-progress)
         write(*,'(a,"|",a,"|",f6.2,"%",1x,i8,"/",i8," Elapsed:",f8.2,"s Remaining:",f8.2,"s")', &
               advance='no') char(13), bar, percent, current, total, elapsed, remaining
+        flush(6)
         if (current == total) print *
         deallocate(bar)
     end subroutine show_progress

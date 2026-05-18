@@ -12,15 +12,15 @@ The input parameters file `parameters.in` looks as shown below.
 # r0 — origin of the computational grid (x, y, z)
 0.0 0.0 0.0
 # non_uniform_grid (.true. / .false.)
-F
+.true.
 # use_fast_sweep (.true. / .false.)
-F
+.true.
 # narrow_band_width (int) — only used when use_fast_sweep = .true.
 6
 # vertical_axis (2 = y is wall-normal, 3 = z is wall-normal)
 3
 # compute_face_sdf (.true. / .false.)
-F
+.false.
 ```
 
 Lines whose first non-blank character is `#` are comments and are ignored by the reader. Blank lines are also ignored.

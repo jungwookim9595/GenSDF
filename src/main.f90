@@ -133,7 +133,7 @@ program generatesdf
                       1, ny, 1, nz, scalarvalue, flood_fill_arr, ierror)
     call MPI_BARRIER(MPI_COMM_WORLD, ierror)
     if (myid == 0) &
-        call fill_internal(flood_fill_arr, size(xp), size(yp), size(zp), 1, 1, 1, nx, ny, nz, -scalarvalue)
+        call fill_internal(flood_fill_arr, size(xp), size(yp), size(zp), sx, sy, sz, ex, ey, ez, -scalarvalue)
     if (use_fast_sweep) then
         ! Broadcast sign-corrected grid to all ranks, run FSM in parallel on x-slabs
         call MPI_BCAST(flood_fill_arr, nx*ny*nz, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
@@ -174,7 +174,7 @@ program generatesdf
                           1, ny, 1, nz, scalarvalue, flood_fill_arr, ierror)
         call MPI_BARRIER(MPI_COMM_WORLD, ierror)
         if (myid == 0) &
-            call fill_internal(flood_fill_arr, size(xf), size(yp), size(zp), 1, 1, 1, nx, ny, nz, -scalarvalue)
+            call fill_internal(flood_fill_arr, size(xf), size(yp), size(zp), sx, sy, sz, ex, ey, ez, -scalarvalue)
         if (use_fast_sweep) then
             call MPI_BCAST(flood_fill_arr, nx*ny*nz, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
             allocate(fsm_local(decomp_x_start(myid):decomp_x_end(myid), ny, nz))
@@ -211,7 +211,7 @@ program generatesdf
                           1, ny, 1, nz, scalarvalue, flood_fill_arr, ierror)
         call MPI_BARRIER(MPI_COMM_WORLD, ierror)
         if (myid == 0) &
-            call fill_internal(flood_fill_arr, size(xp), size(yf), size(zp), 1, 1, 1, nx, ny, nz, -scalarvalue)
+            call fill_internal(flood_fill_arr, size(xp), size(yf), size(zp), sx, sy, sz, ex, ey, ez, -scalarvalue)
         if (use_fast_sweep) then
             call MPI_BCAST(flood_fill_arr, nx*ny*nz, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
             allocate(fsm_local(decomp_x_start(myid):decomp_x_end(myid), ny, nz))
@@ -248,7 +248,7 @@ program generatesdf
                           1, ny, 1, nz, scalarvalue, flood_fill_arr, ierror)
         call MPI_BARRIER(MPI_COMM_WORLD, ierror)
         if (myid == 0) &
-            call fill_internal(flood_fill_arr, size(xp), size(yp), size(zf), 1, 1, 1, nx, ny, nz, -scalarvalue)
+            call fill_internal(flood_fill_arr, size(xp), size(yp), size(zf), sx, sy, sz, ex, ey, ez, -scalarvalue)
         if (use_fast_sweep) then
             call MPI_BCAST(flood_fill_arr, nx*ny*nz, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierror)
             allocate(fsm_local(decomp_x_start(myid):decomp_x_end(myid), ny, nz))
