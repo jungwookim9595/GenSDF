@@ -26,8 +26,8 @@ def read_grid(loc='data/',iprecision=8,ng=[10,10,10],r0=[0.,0.,0.],non_uniform_g
     # setting up some parameters
     #
     r0 = np.array(r0) # domain origin
-    precision  = 'float64'
-    if(iprecision == 4): precision = 'float32'
+    precision  = '>f8'  # big-endian float64
+    if(iprecision == 4): precision = '>f4'  # big-endian float32
     #
     # read geometry file
     #
@@ -64,8 +64,11 @@ filename1 = 'data/sdfu.bin'
 # Load the data from binary file
 with open(filename1, 'rb') as f:
     #f.read(4)  # Skip the 4-byte Fortran marker
-    sdf = np.fromfile(f, count=nx * ny * nz)
+    sdf = np.fromfile(f, dtype='>f8', count=nx * ny * nz)
 sdf = np.reshape(sdf, (nx, ny, nz), order='F')
+# Strip ghost cells: binary has 1 ghost layer on each side of x (dim 0) and
+# wall-normal (dim 1); spanwise (dim 2) is unpadded.
+sdf_interior = sdf[1:-1, 1:-1, :]   # shape (nx-2, ny-2, nz) = interior only
 
-plt.pcolor(xf,yp,sdf[:,:,64].T,cmap='turbo')
+plt.pcolor(xf,yp,sdf_interior[:,:,64].T,cmap='turbo')
 plt.show()
